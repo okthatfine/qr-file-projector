@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>文件放映机</title>
+<style>body{font:1rem/1.6 system-ui,sans-serif;color:#172a38;background:#f6f6f2;max-width:52rem;margin:2rem auto;padding:0 1rem}h1,h2{line-height:1.2}section{background:white;padding:1rem 1.25rem;border:1px solid #b6c3c7;margin:1rem 0}label,button{display:inline-block;margin:.3rem}button,select{padding:.4rem .6rem;font:inherit}canvas,video{display:block;max-width:100%;height:auto;margin:auto}video:empty:not([src]){max-height:50vh}output{display:block;margin:.6rem 0}a{color:#126268}</style>
+<h1>文件放映机</h1>
+<section><h2>放映文件</h2><label>选择文件（最多 64 KiB） <input id="file" type="file"></label><br>
+<label>每块字节数 <select id="width"><option>128</option><option selected>256</option><option>512</option></select></label>
+<label>每帧停留 <select id="dwell"><option value="700">0.7 秒</option><option value="1100" selected>1.1 秒</option><option value="1600">1.6 秒</option></select></label>
+<button id="play">开始放映</button><button id="pause" disabled>停止放映</button>
+<output id="playing"></output><canvas id="screen" width="1" height="1" aria-label="文件二维码"></canvas></section>
+<section><h2>扫码接收</h2><button id="camera">打开摄像头</button><button id="cancel" disabled>停止接收</button>
+<output id="progress" aria-live="polite"></output><video id="view" playsinline muted></video><a id="save" hidden>保存文件</a></section>
+<script type="module" src="./app.js"></script></html>
