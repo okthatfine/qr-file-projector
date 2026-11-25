@@ -1,7 +1,14 @@
 options(
   link: {
     "js": {
-      "exports": [ "chunk_count", "chunk_start", "chunk_end" ],
+      "exports": [
+        "chunk_count",
+        "chunk_start",
+        "chunk_end",
+        "new_collector",
+        "receive_frame",
+        "frame_at",
+      ],
       "format": "esm",
     },
   },
