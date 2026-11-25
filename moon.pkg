@@ -1,0 +1,8 @@
+options(
+  link: {
+    "js": {
+      "exports": [ "chunk_count", "chunk_start", "chunk_end" ],
+      "format": "esm",
+    },
+  },
+)
