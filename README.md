@@ -28,6 +28,14 @@ MoonBit 库计算切块范围，并保存接收端的分块状态。每帧的 JS
 
 测试包括空文件、末块、重复与冲突、跨版本、模拟缺 6 块后补齐，以及「生成二维码 → 渲染像素 → 解码 → 还原原文件」的往返测试。相机距离、投影亮度与接收时长需要现场实测。
 
+构建后可单独复现申报书中的遮挡实验：
+
+```sh
+node --test --test-name-pattern="12 KiB" tests/optical.test.mjs
+```
+
+实验把 12 KiB 样本按 512 字节拆为 24 帧。第一轮跳过开头 6 帧，将其余二维码渲染成像素并用 jsQR 解码，确认只收到 18 块。下一轮补扫前 6 帧，逐字节比对原文件并输出 SHA-256。整个实验在本机内存中运行，无需摄像头。
+
 ## 许可证
 
 本项目使用 MIT 许可证。二维码绘制使用 [qrcode](https://github.com/soldair/node-qrcode)（MIT），读码使用 [jsQR](https://github.com/cozmo/jsQR)（Apache-2.0）。
