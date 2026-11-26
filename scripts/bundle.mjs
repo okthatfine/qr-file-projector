@@ -3,8 +3,8 @@ import {mkdir,copyFile} from "node:fs/promises";
 
 await mkdir("dist",{recursive:true});
 await build({
-  entryPoints:["web/app.mjs"],outfile:"dist/app.js",bundle:true,
+  entryPoints:["web/app.mjs","web/film-worker.mjs"],outdir:"dist",bundle:true,
   platform:"browser",target:"es2020",format:"esm",legalComments:"eof"
 });
 await copyFile("web/index.html","dist/index.html");
-console.log("Built dist/index.html and local app.js; no CDN is needed.");
+console.log("Built the projector and offline GIF worker in dist/.");

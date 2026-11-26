@@ -1,8 +1,8 @@
 import QRCode from "qrcode";
 import {prepare} from "./send.mjs";
 
-export async function project(file, width, canvas, dwell, show) {
-  const frames = await prepare(file,width);
+export async function project(file, width, canvas, dwell, show, ranges = "") {
+  const frames = await prepare(file,width,ranges);
   const image = document.createElement("canvas");
   let index = 0, timer, stopped = false;
   const paint = async () => {

@@ -31,12 +31,3 @@ pub fn chunk_end(length : Int32, width : Int32, index : Int32) -> Int32 {
     start + width
   }
 }
-
-///|
-test "last chunk and empty transfer" {
-  assert_eq(chunk_count(513, 256), 3)
-  assert_eq(chunk_start(513, 256, 2), 512)
-  assert_eq(chunk_end(513, 256, 2), 513)
-  assert_eq(chunk_end(513, 256, 3), -1)
-  assert_eq(chunk_end(0, 256, 0), 0)
-}

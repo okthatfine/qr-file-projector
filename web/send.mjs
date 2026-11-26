@@ -1,13 +1,12 @@
-import {chunk_count,chunk_start,chunk_end} from "../_build/js/release/build/qr-file-projector.js";
-import {fingerprint,MAX_BYTES,writeFrame} from "./wire.mjs";
+import {project_frames} from "../_build/js/release/build/qr-file-projector.js";
+import {fingerprint, MAX_BYTES} from "./wire.mjs";
 
-export async function prepare(file, width=256) {
-  if (!Number.isInteger(width) || width < 64 || width > 512) throw Error("每块应为 64 至 512 字节");
+export async function prepare(file, width = 256, ranges = "") {
+  if (!Number.isInteger(width)) throw Error("块宽须为整数");
   if (file.size > MAX_BYTES) throw Error("请选择不超过 64 KiB 的文件");
-  if (!file.name || file.name.length > 96) throw Error("文件名须为 1 至 96 个字符");
   const bytes = new Uint8Array(await file.arrayBuffer());
-  const meta = {name:file.name, length:bytes.length, width, hash:await fingerprint(bytes)};
-  const total = chunk_count(bytes.length,width);
-  return Array.from({length:total}, (_,i) => writeFrame(meta,i,
-    bytes.subarray(chunk_start(bytes.length,width,i),chunk_end(bytes.length,width,i))));
+  const frames = [];
+  const error = project_frames(bytes, file.name, await fingerprint(bytes), width, ranges, frame => frames.push(frame));
+  if (error) throw Error(error);
+  return frames;
 }

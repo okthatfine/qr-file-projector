@@ -1,27 +1,39 @@
-import {new_collector, receive_frame, frame_at} from "../_build/js/release/build/qr-file-projector.js";
-import {readFrame,decodeBytes,fingerprint} from "./wire.mjs";
+import {
+  new_transfer, scan_frame, scan_count, scan_total, scan_hash, scan_name,
+  missing_ranges, make_ticket, assembled_bytes, save_checkpoint, load_checkpoint, merge_checkpoint
+} from "../_build/js/release/build/qr-file-projector.js";
+import {fingerprint} from "./wire.mjs";
 
 export class Receiver {
-  accept(text) {
-    const f = readFrame(text);
-    const key = JSON.stringify([f.hash,f.name,f.length,f.width]);
-    if (this.key && key !== this.key) throw Error("发现另一份文件，请先重置接收");
-    if (!this.key) {
-      this.key = key;
-      this.meta = f;
-      this.slots = new_collector(f.total);
-    }
-    const count = receive_frame(this.slots,f.index,f.payload);
-    if (count < 0) throw Error("同一块号的数据冲突，请重新接收");
-    this.count = count;
-    return {count,total:f.total,complete:count === f.total};
+  session = new_transfer();
+  get count() { return scan_count(this.session); }
+  get total() { return scan_total(this.session); }
+  get complete() { return this.total > 0 && this.count === this.total; }
+  get missing() { return missing_ranges(this.session); }
+  get ticket() { return make_ticket(this.session); }
+  snapshot() { return save_checkpoint(this.session); }
+
+  restore(text) {
+    const error = load_checkpoint(this.session, text);
+    if (error) throw Error(error);
   }
+
+  merge(text) {
+    const error = merge_checkpoint(this.session, text);
+    if (error) throw Error(error);
+  }
+
+  accept(text) {
+    if (typeof text !== "string") throw Error("无法识别的帧");
+    const error = scan_frame(this.session, text);
+    if (error) throw Error(error);
+    return {count: this.count, total: this.total, complete: this.complete};
+  }
+
   async finish() {
-    const m = this.meta;
-    if (!m || this.count !== m.total) throw Error("还有数据块待接收");
-    const bytes = new Uint8Array(m.length);
-    for (let i=0;i<m.total;i++) bytes.set(decodeBytes(frame_at(this.slots,i)), i*m.width);
-    if (await fingerprint(bytes) !== m.hash) throw Error("文件摘要不符，请重新接收");
-    return {bytes,name:m.name};
+    if (!this.complete) throw Error("还有数据块待接收");
+    const bytes = assembled_bytes(this.session);
+    if (await fingerprint(bytes) !== scan_hash(this.session)) throw Error("文件摘要不符，请重新接收");
+    return {bytes, name: scan_name(this.session)};
   }
 }

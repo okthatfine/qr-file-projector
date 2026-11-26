@@ -6,8 +6,15 @@
 <section><h2>放映文件</h2><label>选择文件（最多 64 KiB） <input id="file" type="file"></label><br>
 <label>每块字节数 <select id="width"><option>128</option><option selected>256</option><option>512</option></select></label>
 <label>每帧停留 <select id="dwell"><option value="700">0.7 秒</option><option value="1100" selected>1.1 秒</option><option value="1600">1.6 秒</option></select></label>
-<button id="play">开始放映</button><button id="pause" disabled>停止放映</button>
+<br><label>补播凭条或缺块编号 <input id="ranges" placeholder="留空播全部，或填 1-3,8"></label><br>
+<button id="play">开始放映</button><button id="pause" disabled>停止放映</button><button id="export">导出循环 GIF</button>
 <output id="playing"></output><canvas id="screen" width="1" height="1" aria-label="文件二维码"></canvas></section>
 <section><h2>扫码接收</h2><button id="camera">打开摄像头</button><button id="cancel" disabled>停止接收</button>
-<output id="progress" aria-live="polite"></output><video id="view" playsinline muted></video><a id="save" hidden>保存文件</a></section>
+<button id="reset" disabled>清空接收进度</button><br>
+<label>读取放映 GIF <input id="importGif" type="file" accept="image/gif,.gif"></label>
+<label>恢复或合并进度 <input id="resume" type="file" accept=".qfc"></label>
+<button id="checkpoint" disabled>保存进度文件</button>
+<output id="progress" aria-live="polite"></output><video id="view" playsinline muted></video><a id="save" hidden>保存文件</a>
+<label id="repairBox" hidden>缺块与补播凭条 <input id="ticket" readonly></label><output id="missing"></output>
+</section>
 <script type="module" src="./app.js"></script></html>

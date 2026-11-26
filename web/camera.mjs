@@ -1,11 +1,9 @@
 import jsQR from "jsqr";
-import {Receiver} from "./receive.mjs";
 
-export async function scan(video,show,save) {
+export async function scan(video,show,save,receiver) {
   const stream = await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"}}});
   const buffer = document.createElement("canvas");
   const ctx = buffer.getContext("2d",{willReadFrequently:true});
-  const receiver = new Receiver();
   let stopped=false, timer;
   function stop() {
     stopped=true;
